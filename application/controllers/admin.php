@@ -7,6 +7,7 @@ class admin extends CI_Controller
     public function __construct() {
         parent::__construct();        
         $this->load->model('m_admin');
+        $this->load->model('m_webboard');
         if ($this->session->userdata('username')&&$this->uri->segment(2,'')!='') {
             $user_data = $this->m_admin->get_admin_by_username($this->session->userdata('username'));
             if (isset($user_data->username)) {
@@ -43,7 +44,7 @@ class admin extends CI_Controller
         $this->load->view('admin/v_header', $data_head);
         $this->load->view('admin/v_admin_list', $data_view);
         $this->load->view('admin/v_footer', $data_foot);
-    }
+    }    
 
     public function admin_user_add() {
         
@@ -165,5 +166,52 @@ class admin extends CI_Controller
         $this->session->set_userdata('username', '');
         $this->session->sess_destroy();
         redirect('admin');
+    }
+
+
+    public function webboard_room_list() {
+        $page=$this->uri->segment(3,'1');
+        $page=(int)$page;
+        $data_foot['table'] = "yes";
+        $data_head['user_data'] = $this->user_data;
+        $data_view['room_list_obj'] = $this->m_webboard->get_all_room(($page-1)*10);
+        $data_view['room_list']=$data_view['room_list_obj']->result();
+        $count_all=$data_view['room_list_obj']->count_all;
+        //echo $count_all;
+        $page_num=ceil($count_all/10);
+        $data_view['page'] = $page;
+        $data_view['page_num'] = $page_num;
+        $this->load->view('admin/v_header', $data_head);
+        $this->load->view('admin/v_webboard_room_list', $data_view);
+        $this->load->view('admin/v_footer', $data_foot);
+    }
+
+    public function webboard_room_add() {
+        
+        $data_head['user_data'] = $this->user_data;
+        $data['err_msg']='';
+        if (isset($_POST['room_name'])) {
+            if ($_POST['room_name'] == "") {
+                $data['err_msg'] = "กรุณากรอก Room name";
+                
+                $this->load->view('admin/v_header', $data_head);
+                $this->load->view('admin/v_webboard_room_add', $data);
+                $this->load->view('admin/v_footer');
+            }             
+            else {
+                $data = array(
+                    'room_name' => $_POST['room_name'], 
+                    'room_description' => $_POST['room_description'], 
+                    'id' => $this->m_webboard->generate_id(), 
+                    );                
+                $this->m_webboard->add_room($data);
+                redirect('admin/webboard_room_list');
+            }
+        } 
+        else {
+            $this->load->view('admin/v_header', $data_head);
+            $this->load->view('admin/v_webboard_room_add', $data);
+            $this->load->view('admin/v_footer');
+        }
     }
 }

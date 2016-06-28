@@ -2,7 +2,7 @@
           <ul class="nav nav-sidebar">
             <li <?if (isset($dashboard)) {?>class="active"<?}?>><a href="<?echo site_url('admin/dashboard');?>">Overview <span class="sr-only">(current)</span></a></li>
             <li <?if (isset($admin_list)) {?>class="active"<?}?>><a href="<?echo site_url('admin/admin_list');?>">Admin User</a></li>
-            <li><a href="#">Analytics</a></li>
+            <li <?if (isset($webboard_room)) {?>class="active"<?}?>><a href="<?echo site_url('admin/webboard_room_list');?>">Webboard Room</a></li>
             <li><a href="#">Export</a></li>
           </ul>
           <ul class="nav nav-sidebar">
