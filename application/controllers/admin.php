@@ -8,7 +8,7 @@ class admin extends CI_Controller
         parent::__construct();        
         $this->load->model('m_admin');
         $this->load->model('m_webboard');
-        if (($this->session->userdata('username')||$this->uri->segment(2,'')!='')&&$this->uri->segment(2,'')!='logout') {
+        if (($this->session->userdata('username')||$this->uri->segment(2,'')!='')&&$this->uri->segment(2,'')!='logout'&&$this->uri->segment(2,'')!='login') {
             $user_data = $this->m_admin->get_admin_by_username($this->session->userdata('username'));
             if (isset($user_data->username)) {
                 $this->user_data = $user_data;
